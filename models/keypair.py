@@ -1,0 +1,1 @@
+#classe q representa uma chave
