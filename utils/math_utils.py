@@ -2,18 +2,43 @@
 
 class MathUtils:
 
+    # Implement the Euclidean algorithm to find the greatest common divisor (GCD) of two integers a and b
+    # Implement a simple iterative function that returns the GCD of a and b
     @staticmethod
     def gcd(a: int, b: int) -> int:
-        pass
+        while b != 0:
+            a, b = b, a % b
+        return abs(a)
 
+    # Implement the Extended Euclidean algorithm to find the GCD of two integers a and b, as well as the coefficients x and y such that ax + by = gcd(a, b)
+    # Implement a recursive function that returns a tuple containing the GCD and the coefficients x and y
     @staticmethod
-    def extended_gcd(a: int, b: int):
-        pass
+    def extended_gcd(a: int, b: int) -> tuple[int, int, int]:
+        if b == 0:
+            return a, 1, 0
+        else:
+            gcd, x1, y1 = MathUtils.extended_gcd(b, a % b)
+            x = y1
+            y = x1 - (a // b) * y1
+            return gcd, x, y
 
+
+    #Implement a function to compute the modular inverse of a number a modulo m using the Extended Euclidean algorithm
     @staticmethod
-    def modular_inverse(a: int, m: int):
-        pass
+    def modular_inverse(a: int, m: int) -> int:
+        gcd, x, _ = MathUtils.extended_gcd(a, m)
+        if gcd != 1:
+            raise ValueError(f"Modular inverse does not exist for a={a} and m={m}")
+        return x % m
 
+    #Implement a function to compute the modular exponentiation of a number base raised to the power of exponent modulo modulus using the method of exponentiation by squaring
     @staticmethod
     def mod_pow(base: int, exponent: int, modulus: int) -> int:
-        pass
+        result = 1
+        base = base % modulus
+        while exponent > 0:
+            if exponent % 2 == 1:
+                result = (result * base) % modulus
+            exponent = exponent // 2
+            base = (base * base) % modulus
+        return result
