@@ -1,4 +1,5 @@
 from utils.math_utils import MathUtils
+from utils.message_utils import MessageUtils
 import random
 
 class ElGamal:
@@ -56,7 +57,22 @@ class ElGamal:
         m = (c2 * s_inverso) % self.p
         return m
     
+    def criptografar_mensagem(self, texto):
+        blocos = MessageUtils.mensagem_para_blocos(texto, self.p)
+        criptogramas = []
+        for bloco in blocos:
+            c1, c2 = self.criptografar(bloco)
+            criptogramas.append((c1, c2))
+        return criptogramas
     
+    def descriptografar_mensagem(self, criptogramas):
+        blocos = []
+        for c1, c2 in criptogramas:
+            bloco = self.descriptografar(c1, c2)
+            blocos.append(bloco)
+        
+        mensagem = MessageUtils.blocos_para_mensagem(blocos)
+        return mensagem
 
 
 #GERAÇÃO DAS CHAVES

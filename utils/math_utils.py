@@ -77,7 +77,7 @@ class MathUtils:
             if eh_composto:
                 return False
         return True
-        
+    
     @staticmethod
     def gerar_primo(bits):
         while True:
@@ -86,31 +86,3 @@ class MathUtils:
             numero = numero | 1 
             if MathUtils.eh_primo(numero):
                 return numero
-            
-    @staticmethod
-    def mensagem_para_numeros(mensagem):
-        numeros_str = ""
-        for caractere in mensagem:
-            numeros_str += str(ord(caractere)) 
-        return int(numeros_str)
-
-    @staticmethod
-    def grupo_para_256(grupo):
-        soma = 0
-        i = 0
-        while grupo:
-            soma += grupo.pop() * (256 ** i)
-            i += 1
-        return soma 
-
-    @staticmethod
-    def _256_para_grupo(numero):
-        if numero == 0:
-            return [0]
-        else:
-            grupo = []
-            while numero > 0:
-                grupo.append(numero % 256)
-                numero = numero // 256
-            grupo.reverse()
-            return grupo
