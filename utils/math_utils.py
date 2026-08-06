@@ -1,4 +1,5 @@
 #modulo de funções matematicas
+import random
 
 class MathUtils:
 
@@ -42,3 +43,46 @@ class MathUtils:
             exponent = exponent // 2
             base = (base * base) % modulus
         return result
+    
+    @staticmethod
+    def eh_primo(n, k=20): #Miller-Rabin
+        # k = numero de rodadas teste
+        if n < 2:
+            return False
+        if n == 2 or n == 3:
+            return True
+        if n % 2 == 0:
+            return False
+        
+        d = n - 1 
+        s = 0
+        while d % 2 == 0:
+            d = d // 2
+            s += 1
+            
+        for i in range(k):
+            a = random.randint(2, n-2)
+            x = pow(a, d, n)   # a^d mod n
+            
+            if x == 1 or x == n-1:
+                continue
+        
+            eh_composto = True
+            for j in range (s-1):
+                x = pow(x, 2, n)
+                if x == n-1:
+                    eh_composto = False
+                    break
+                
+            if eh_composto:
+                return False
+        return True
+        
+    @staticmethod
+    def gerar_primo(bits):
+        while True:
+            numero = random.getrandbits(bits)
+            numero = numero | (1 << (bits - 1))
+            numero = numero | 1 
+            if MathUtils.eh_primo(numero):
+                return numero
