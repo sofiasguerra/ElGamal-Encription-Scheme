@@ -2,7 +2,7 @@ from utils.math_utils import MathUtils
 import random
 
 class ElGamal:
-    def __init__(self, bits=256):
+    def __init__(self, bits):
         self.bits = bits
         self.p = None #primo grande
         self.g = None #gerador / raiz primitiva
@@ -38,28 +38,29 @@ class ElGamal:
         self.encontrar_raiz_primitiva()
         self.gerar_chave_privada()
         self.calcular_a()
+        
+    def criptografar(self, m):
+        if not (0 < m < self.p):
+            raise ValueError(f"Mensagem m={m} fora do intervalo válido (0, {self.p})")
+        
+        y = random.randint(1, self.p-2)
+        c1 = pow(self.g, y, self.p)
+        c2 = (m * pow(self.a, y, self.p)) % self.p
+        
+        return (c1, c2)
+    
+    def descriptografar(self, c1, c2):
+        s = pow(c1, self.x, self.p)
+        s_inverso = MathUtils.modular_inverse(s, self.p)
+        
+        m = (c2 * s_inverso) % self.p
+        return m
     
     
 
 
 #GERAÇÃO DAS CHAVES
-p = int(input("Digite um primo grande para ser número do múdulo (p):"))
-r = int(input("Digite uma raiz primitiva qualquer de p (r):"))
-x = int(input("Digite um número natural 2 < x < p-2 aleatoriamente:"))
 
-a = pow(r,x,p)
-
-
-def gerar_chaves(p, r, x):
-    a = pow(r,x,p)
-    publica = (p,r,a)
-    privada = x
-    return publica, privada
-
-chave_publica, chave_privada = gerar_chaves(p,r,x)
-
-print("Chave pública:", chave_publica)
-print("Chave privada:", chave_privada)
 
 def converter_mensagem(mensagem):
     numeros = []
@@ -68,9 +69,3 @@ def converter_mensagem(mensagem):
         numeros.append(ord(caractere))
 
     return numeros
-
-mensagem = input(("Digite a mensagem que você quer criptografar:"))
-
-msg_convertida = converter_mensagem(mensagem)
-
-print(msg_convertida)

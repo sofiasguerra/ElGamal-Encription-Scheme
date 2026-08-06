@@ -86,3 +86,12 @@ class MathUtils:
             numero = numero | 1 
             if MathUtils.eh_primo(numero):
                 return numero
+            
+    @staticmethod
+    def mensagem_para_numeros(mensagem):
+        numeros_str = ""
+        for caractere in mensagem:
+            numeros_str += str(ord(caractere)) 
+        return int(numeros_str)
+    
+    
