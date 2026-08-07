@@ -1,5 +1,3 @@
-from utils.math_utils import MathUtils
-
 class MessageUtils:
     @staticmethod
     def texto_para_bytes(texto):
@@ -58,7 +56,8 @@ class MessageUtils:
     
     @staticmethod
     def bytes_para_texto(bytes):
-        return "".join(chr(byte) for byte in bytes)
+        texto = "".join(chr(byte) for byte in bytes)
+        return texto
     
     @staticmethod
     def blocos_para_mensagem(blocos):

@@ -1,87 +1,66 @@
-'''FUNÇÃO gerar_chaves(tamanho_bits):
-    // Passo 1: escolher dois primos grandes e distintos
-    p ← gerar_primo_aleatorio(tamanho_bits)
-    q ← gerar_primo_aleatorio(tamanho_bits)
-    ENQUANTO p == q:
-        q ← gerar_primo_aleatorio(tamanho_bits)
+from utils.math_utils import MathUtils
+from utils.message_utils import MessageUtils
+import random
 
-    // Passo 2: calcular o módulo
-    n ← p * q
-
-    // Passo 3: calcular a função totiente de Euler
-    φ(n) ← (p - 1) * (q - 1)
-
-    // Passo 4: escolher o expoente público e
-    // precisa satisfazer: 1 < e < φ(n)  e  mdc(e, φ(n)) = 1
-    e ← 65537   // valor comum na prática (número primo de Fermat)
-    VERIFICAR que mdc(e, φ(n)) == 1
-    // se não for, escolher outro e ou outros p, q
-
-    // Passo 5: calcular o expoente privado d
-    // d é o inverso modular de e em relação a φ(n)
-    d ← inverso_modular(e, φ(n))
-
-    chave_publica ← (n, e)
-    chave_privada ← (n, d)
-
-FUNÇÃO cifrar(mensagem m, chave_publica (n, e)):
-    // pré-condição: 0 ≤ m < n
-    c ← exponenciacao_modular(m, e, n)   // c = m^e mod n
-    RETORNAR c
+class RSA():
     
-FUNÇÃO decifrar(criptograma c, chave_privada (n, d)):
-    m ← exponenciacao_modular(c, d, n)   // m = c^d mod n
-    RETORNAR 
+    def __init__(self, tamanho_bits):
+        self.bits = tamanho_bits 
+        self.p = None
+        self.q = None
+        self.n = None
+        self.e = None  
+        self.phi_n = None
+        self.d = None
+        self.chave_publica = None
+        self.chave_privada = None
+
+    def gerar_chaves(self):
+        self.p = MathUtils.gerar_primo(self.bits//2)
+        self.q = MathUtils.gerar_primo(self.bits//2)
+        while self.p == self.q:
+            self.q = MathUtils.gerar_primo(self.bits//2)
+        self.calcular_n_phi()
+        self.escolher_e()
+        self.d = MathUtils.modular_inverse(self.e, self.phi_n)
+        self.chave_publica = (self.n, self.e)
+        self.chave_privada = (self.n, self.d)
+
+    def escolher_e(self):
+        while True:
+            candidato = random.randint(2, self.phi_n-1)
+            if MathUtils.extended_gcd(candidato, self.phi_n)[0] == 1:
+                self.e = candidato
+                break
     
-FUNÇÃO exponenciacao_modular(base, expoente, modulo):
-    resultado ← 1
-    base ← base mod modulo
-    ENQUANTO expoente > 0:
-        SE expoente é ímpar:
-            resultado ← (resultado * base) mod modulo
-        expoente ← expoente // 2
-        base ← (base * base) mod modulo
-    RETORNAR resultado
+    def calcular_n_phi(self):
+        self.n = self.p * self.q
+        self.phi_n = (self.p - 1) * (self.q - 1)
+            
+    def criptografar(self, m):
+        if not (0 <= m < self.n):
+            raise ValueError(f"Mensagem m={m} fora do intervalo válido (0, {self.n})")
+        
+        c = pow(m, self.e, self.n)
+        return c
     
-FUNÇÃO inverso_modular(e, phi):
-    // resolve e*d ≡ 1 (mod phi) usando Euclides estendido
-    (mdc, x, y) ← euclides_estendido(e, phi)
-    SE mdc != 1:
-        ERRO "e e phi não são coprimos"
-    d ← x mod phi
-    RETORNAR d
-
-FUNÇÃO euclides_estendido(a, b):
-    SE b == 0:
-        RETORNAR (a, 1, 0)
-    (mdc, x1, y1) ← euclides_estendido(b, a mod b)
-    x ← y1
-    y ← x1 - (a // b) * y1
-    RETORNAR (mdc, x, y)
+    def descriptografar(self, c):
+        m = pow(c, self.d, self.n)
+        return m
     
-FUNÇÃO eh_primo(n, k_rodadas):
-    SE n < 2: RETORNAR falso
-    SE n == 2 OU n == 3: RETORNAR verdadeiro
-    SE n é par: RETORNAR falso
+    def criptografar_mensagem(self, mensagem):
+        blocos = MessageUtils.mensagem_para_blocos(mensagem, self.n)
+        criptogramas = []
+        for bloco in blocos:
+            c = self.criptografar(bloco)
+            criptogramas.append(c)
+        return criptogramas
 
-    // escrever n-1 como 2^r * d
-    r ← 0; d ← n - 1
-    ENQUANTO d é par:
-        r ← r + 1
-        d ← d // 2
-
-    REPETIR k_rodadas vezes:
-        a ← número aleatório entre 2 e n-2
-        x ← exponenciacao_modular(a, d, n)
-        SE x == 1 OU x == n-1: CONTINUAR
-
-        composto ← verdadeiro
-        REPETIR r-1 vezes:
-            x ← (x * x) mod n
-            SE x == n-1:
-                composto ← falso
-                PARAR
-        SE composto: RETORNAR falso
-
-    RETORNAR verdadeiro
-   '''
+    def descriptografar_mensagem(self, criptogramas):
+        blocos = []
+        for c in criptogramas:
+            m = self.descriptografar(c)
+            blocos.append(m)
+        
+        mensagem = MessageUtils.blocos_para_mensagem(blocos)
+        return mensagem

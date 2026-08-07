@@ -3,22 +3,24 @@ from utils.message_utils import MessageUtils
 import random
 
 class ElGamal:
-    def __init__(self, bits):
-        self.bits = bits
+    def __init__(self, tamanho_bits):
+        self.bits = tamanho_bits
         self.p = None #primo grande
-        self.g = None #gerador / raiz primitiva
-        self.x = None #chave privada
+        self.g = None #gerador / raiz primitiva 
         self.a = None #chave pública calculada
-
-    def gerar_p_seguro(self, bits):
-        while True:
-            candidatoQ = MathUtils.gerar_primo(bits-1)
+        self.chave_publica = None
+        self.chave_privada = None
+        
+    def gerar_p_seguro(self):   
+         while True:
+            candidatoQ = MathUtils.gerar_primo(self.bits - 1)
             candidatoP = 2 * candidatoQ + 1
-            
+        
             if MathUtils.eh_primo(candidatoP):
                 self.p = candidatoP
                 self.q = candidatoQ
                 break
+    
         
     def encontrar_raiz_primitiva(self):
         while True:
@@ -29,16 +31,17 @@ class ElGamal:
                 break
     
     def gerar_chave_privada(self):
-        self.x = random.randint(3, self.p-2)
+        self.chave_privada = random.randint(3, self.p-2)
     
     def calcular_a(self):
-        self.a = pow(self.g, self.x, self.p) # g^x mod p
+        self.a = pow(self.g, self.chave_privada, self.p) # g^x mod p
     
     def gerar_chaves(self):
-        self.gerar_p_seguro(self.bits)
+        self.gerar_p_seguro()
         self.encontrar_raiz_primitiva()
         self.gerar_chave_privada()
         self.calcular_a()
+        self.chave_publica = (self.p, self.g, self.a)
         
     def criptografar(self, m):
         if not (0 < m < self.p):
@@ -51,7 +54,7 @@ class ElGamal:
         return (c1, c2)
     
     def descriptografar(self, c1, c2):
-        s = pow(c1, self.x, self.p)
+        s = pow(c1, self.chave_privada, self.p)
         s_inverso = MathUtils.modular_inverse(s, self.p)
         
         m = (c2 * s_inverso) % self.p
@@ -73,15 +76,4 @@ class ElGamal:
         
         mensagem = MessageUtils.blocos_para_mensagem(blocos)
         return mensagem
-
-
-#GERAÇÃO DAS CHAVES
-
-
-def converter_mensagem(mensagem):
-    numeros = []
-
-    for caractere in mensagem:
-        numeros.append(ord(caractere))
-
-    return numeros
+    
