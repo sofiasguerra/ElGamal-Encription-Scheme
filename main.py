@@ -21,7 +21,7 @@ def escolha_de_mensagem():
         print("Opção inválida! Tente novamente.")
         time.sleep(2)
         return escolha_de_mensagem()
-
+    
 
 def menu_configuracao():
     print("Escolha uma opção de exibição:")
