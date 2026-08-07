@@ -1,4 +1,7 @@
 #classe para fazer a comparação
+from utils.math_utils import MathUtils
+
+
 class Benchmark:
     def __init__(self, algoritmo):
             self.algoritmo = algoritmo

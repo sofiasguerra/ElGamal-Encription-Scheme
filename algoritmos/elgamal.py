@@ -4,6 +4,7 @@ from utils.message_utils import MessageUtils
 import random
 
 class ElGamal(AsymmetricCipher):
+    
     def __init__(self, tamanho_bits):
         self.bits = tamanho_bits
         self.p = None #primo grande

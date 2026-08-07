@@ -1,5 +1,6 @@
 #modulo de funções matematicas
 import random
+import time
 
 class MathUtils:
 #========================================================================================================================================================#
@@ -32,14 +33,21 @@ class MathUtils:
         # Primalidade e geração de números primos (RSA e ElGamal)   
 #========================================================================================================================================================# 
     @staticmethod
-    def eh_primo(n, k=20): #Miller-Rabin
-        # k = numero de rodadas teste
+    def eh_primo(n, k=4): #Miller-Rabin
+        # k = numero de rodadas teste de primalidade, quanto maior k, maior a confiabilidade do teste
         if n < 2:
             return False
         if n == 2 or n == 3:
             return True
         if n % 2 == 0:
             return False
+        
+        pequenos_primos = [3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199]
+        for p in pequenos_primos:
+            if n == p:
+                return True
+            if n % p == 0:
+                return False
         
         d = n - 1 
         s = 0
@@ -70,21 +78,22 @@ class MathUtils:
         while True:
             numero = random.getrandbits(bits)
             numero = numero | (1 << (bits - 1))
-            numero = numero | 1 
+            numero = numero | 1
             if MathUtils.eh_primo(numero):
-                return numero    
+                return numero
             
 #========================================================================================================================================================#
         #ElGamal
 #========================================================================================================================================================#
     @staticmethod
-    def gerar_p_seguro(bits):   
-         while True:
-            candidatoQ = MathUtils.gerar_primo(bits - 1)
+    def gerar_p_seguro(bits):  
+        while True:
+            candidatoQ = MathUtils.gerar_primo(bits - 1)    
             candidatoP = 2 * candidatoQ + 1
         
             if MathUtils.eh_primo(candidatoP):
                 return candidatoP, candidatoQ
+       
 
     @staticmethod
     def encontrar_raiz_primitiva(p, q):
