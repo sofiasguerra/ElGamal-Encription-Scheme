@@ -3,6 +3,14 @@ from utils.math_utils import MathUtils
 from utils.message_utils import MessageUtils
 import random
 
+"""
+Módulo que implementa o algoritmo de criptografia RSA, que é um
+algoritmo de chave pública baseado na fatoração de números primos.
+Ele permite a criptografia e descriptografia de mensagens usando
+um par de chaves (pública e privada). O módulo inclui métodos para
+gerar chaves, criptografar e descriptografar mensagens, bem como 
+para converter mensagens em blocos numéricos e vice-versa.
+"""
 class RSA(AsymmetricCipher):
     
     def __init__(self, tamanho_bits):

@@ -1,6 +1,14 @@
 import random 
 
-#Módulo para operações matemáticas, incluindo aritmética modular, primalidade e conversão entre grupos de bytes e números inteiros.
+"""
+Módulo de utilitários matemáticos, usado tanto por RSA quanto
+por ElGamal. Contém: aritmética modular (mdc, mdc estendido, 
+inverso modular), teste de primalidade (Miller-Rabin) e geração 
+de primos, geração de parâmetros específicos do ElGamal (primo
+seguro, raiz primitiva), e conversão entre sequências de bytes 
+e inteiros em base 256 (usada na codificação de mensagens de texto
+em blocos numéricos).
+"""
 class MathUtils:
 #========================================================================================================================================================#
         #Operações aritméticas modulares (RSA e ElGamal)
@@ -13,6 +21,7 @@ class MathUtils:
 
     @staticmethod
     def extended_gcd(a: int, b: int) -> tuple[int, int, int]:
+        # Euclides estendido: além do mdc(a,b), devolve x,y tais que a*x + b*y = mdc(a,b)
         if b == 0:
             return a, 1, 0
         else:
@@ -23,6 +32,7 @@ class MathUtils:
 
     @staticmethod
     def modular_inverse(a: int, m: int) -> int:
+        # Usa o euclides estendido pra achar o inverso de a mod m (só existe se mdc(a,m)=1)
         gcd, x, _ = MathUtils.extended_gcd(a, m)
         if gcd != 1:
             raise ValueError(f"Modular inverse does not exist for a={a} and m={m}")
@@ -41,13 +51,16 @@ class MathUtils:
         if n % 2 == 0:
             return False
         
+        # Pré-filtro: descarta candidatos com fator primo pequeno sem
+        #precisar do Miller-Rabin completo (bem mais barato).
         pequenos_primos = [3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199]
         for p in pequenos_primos:
             if n == p:
                 return True
             if n % p == 0:
                 return False
-        
+            
+        # Decompõe n-1 = 2^s * d, com d ímpar
         d = n - 1 
         s = 0
         while d % 2 == 0:
@@ -59,13 +72,13 @@ class MathUtils:
             x = pow(a, d, n)   # a^d mod n
             
             if x == 1 or x == n-1:
-                continue
+                continue # essa testemunha não provou nada, testa a próxima
         
             eh_composto = True
             for j in range (s-1):
                 x = pow(x, 2, n)
                 if x == n-1:
-                    eh_composto = False
+                    eh_composto = False  # achou uma testemunha que prova que n é composto
                     break
                 
             if eh_composto:
@@ -74,10 +87,11 @@ class MathUtils:
     
     @staticmethod
     def gerar_primo(bits):
+        # Gera candidatos aleatórios de "bits" bits até achar um primo
         while True:
             numero = random.getrandbits(bits)
-            numero = numero | (1 << (bits - 1))
-            numero = numero | 1
+            numero = numero | (1 << (bits - 1)) # garante que tem exatamente "bits" bits
+            numero = numero | 1 # garante ímpar
             if MathUtils.eh_primo(numero):
                 return numero
             
@@ -85,7 +99,8 @@ class MathUtils:
         #ElGamal
 #========================================================================================================================================================#
     @staticmethod
-    def gerar_p_seguro(bits):  
+    def gerar_p_seguro(bits):
+        # Gera p = 2q+1 com q e p primos (primo seguro ou primo forte, facilita achar raiz primitiva)
         while True:
             candidatoQ = MathUtils.gerar_primo(bits - 1)    
             candidatoP = 2 * candidatoQ + 1
@@ -95,6 +110,7 @@ class MathUtils:
 
     @staticmethod
     def encontrar_raiz_primitiva(p, q):
+        # Como p-1 = 2q, só precisa testar essas duas condições pra confirmar raiz primitiva
         while True:
             candidatoG = random.randint(2, p-2)
             
@@ -106,6 +122,7 @@ class MathUtils:
 #========================================================================================================================================================#
     @staticmethod
     def calcular_tamanho_bloco(p):
+        # Quantos bytes cabem por bloco sem estourar p, em base 256
         k = 1
         while (256 ** (k + 1)) < p:
             k += 1
@@ -113,6 +130,7 @@ class MathUtils:
     
     @staticmethod
     def grupo_para_256(grupo):
+        # Junta uma lista de bytes num número só, tratando a lista como base 256
         numero = 0
         for i, valor in enumerate(grupo):
             numero += valor * (256 ** (len(grupo) - 1 - i))
@@ -120,6 +138,7 @@ class MathUtils:
     
     @staticmethod
     def base256_para_grupo(numero):
+        # Caminho inverso: separa o número de volta em bytes (base 256)
         grupo = []
         while numero > 0:
             grupo.append(numero % 256)

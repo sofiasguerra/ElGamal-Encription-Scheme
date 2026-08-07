@@ -1,3 +1,9 @@
+"""
+Ponto de entrada do programa: menu interativo de linha de comando para
+testar RSA e ElGamal individualmente, ou comparar os dois algoritmos
+lado a lado (tempo/memória de geração de chaves, criptografia e
+descriptografia).
+"""
 from algoritmos.elgamal import ElGamal
 from algoritmos.rsa import RSA
 from benchmark.benchmark import Benchmark
@@ -6,7 +12,7 @@ import time
 
 def getMensagemAleatoria():
 
-    frases = ["a Matemática é linda!!😻", "quero uma pizza com Coentro 🌿, por favor!", "FMCC2 é a melhor cadeira do P2!", "queremosFérias", "@tiagoMassoni", "FMCC2 é muito legal!! 🥳","👍🤙🙏👏", "eu amo o curso de Ciências da Computação na UFCG","Quando tudo isso acabar, eu vou precisar de TERAPIA!!!"]
+    frases = ["a Matemática é linda!!😻", "quero uma pizza com Coentro 🌿, por favor!", "FMCC2 é a melhor cadeira do P2!", "Qu3r3m0s fér14s XD", "@tiagoMassoni", "FMCC2 é muito legal!! 🥳","👍🤙🙏👏", "eu amo o curso de Ciências da Computação na UFCG","Quando tudo isso acabar, eu vou precisar de TERAPIA!!!"]
 
     import random
     r = random.randint(0, len(frases) - 1)

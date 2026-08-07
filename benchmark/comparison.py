@@ -1,6 +1,10 @@
 from benchmark.benchmark import Benchmark
 
-#Módulo que executa os mesmos testes para RSA e ElGamal e organiza os resultados para comparação.
+"""
+Módulo que executa os mesmos testes (geração de chaves, criptografia e
+descriptografia) para RSA e ElGamal via Benchmark, e monta comparações
+textuais de tempo e memória entre os dois algoritmos.
+"""
 class Comparison():
     def __init__(self, rsa, elgamal):
         self.rsa = rsa

@@ -1,11 +1,17 @@
-from utils.math_utils import MathUtils
-
-#Módulo para medir o desempenho de algoritmos de criptografia, incluindo tempo de execução e uso de memória.
+"""
+Módulo de medição de desempenho (benchmark) para os algoritmos de
+criptografia (RSA e ElGamal). Mede tempo de execução e uso de memória
+das etapas de geração de chaves, criptografia e descriptografia,
+fazendo a média de várias execuções para reduzir ruído nas medições.
+"""
 class Benchmark:
     def __init__(self, algoritmo):
             self.algoritmo = algoritmo
 
     def medir_tempo_e_memoria(self, funcao, *args):
+       
+        # roda 5 vezes e tira a média, porque uma execução só pode variar bastante
+        # (outros processos rodando, coleta de lixo no meio, etc) e distorcer a medição
         import time
         import tracemalloc
         import gc 
@@ -13,7 +19,7 @@ class Benchmark:
         tempos = []
         memorias = []
         for _ in range(5):
-            gc.collect()
+            gc.collect() # limpa o lixo antes de medir, pra não contar memória de execuções passadas
             tracemalloc.start()
             inicio = time.perf_counter()
             resultado = funcao(*args)
