@@ -1,9 +1,6 @@
-import gc
-import time
-
 from utils.math_utils import MathUtils
 
-
+#Módulo para medir o desempenho de algoritmos de criptografia, incluindo tempo de execução e uso de memória.
 class Benchmark:
     def __init__(self, algoritmo):
             self.algoritmo = algoritmo

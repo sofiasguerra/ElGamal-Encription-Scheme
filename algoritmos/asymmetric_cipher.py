@@ -1,6 +1,7 @@
 
 from abc import ABC, abstractmethod
 
+#Classe abstrata que serve como modelo para algoritmos de criptografia assimétrica. Ela define operações comuns que RSA e ElGamal devem possuir
 class AsymmetricCipher(ABC):
 
     @abstractmethod

@@ -1,6 +1,6 @@
 from benchmark.benchmark import Benchmark
 
-
+#Módulo que executa os mesmos testes para RSA e ElGamal e organiza os resultados para comparação.
 class Comparison():
     def __init__(self, rsa, elgamal):
         self.rsa = rsa

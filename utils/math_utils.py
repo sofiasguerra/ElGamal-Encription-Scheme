@@ -1,7 +1,6 @@
-#modulo de funções matematicas
-import random
-import time
+import random 
 
+#Módulo para operações matemáticas, incluindo aritmética modular, primalidade e conversão entre grupos de bytes e números inteiros.
 class MathUtils:
 #========================================================================================================================================================#
         #Operações aritméticas modulares (RSA e ElGamal)
@@ -93,7 +92,6 @@ class MathUtils:
         
             if MathUtils.eh_primo(candidatoP):
                 return candidatoP, candidatoQ
-       
 
     @staticmethod
     def encontrar_raiz_primitiva(p, q):

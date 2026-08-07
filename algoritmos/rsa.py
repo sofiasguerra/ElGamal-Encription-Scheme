@@ -7,14 +7,14 @@ class RSA(AsymmetricCipher):
     
     def __init__(self, tamanho_bits):
         self.bits = tamanho_bits 
-        self.p = None
-        self.q = None
-        self.n = None
-        self.e = None  
-        self.phi_n = None
-        self.d = None
-        self.chave_publica = None
-        self.chave_privada = None
+        self.p = None #primo grande
+        self.q = None #primo grande
+        self.n = None #modulo n = p*q
+        self.e = None  #exponente público
+        self.phi_n = None #função totiente de n, phi(n) = (p-1)*(q-1)
+        self.d = None #exponente privado, d = e^(-1) mod phi(n)
+        self.chave_publica = None #(n, e)
+        self.chave_privada = None #(n, d)
 
     def gerar_chaves(self):
         self.p = MathUtils.gerar_primo(self.bits//2)

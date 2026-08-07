@@ -10,8 +10,8 @@ class ElGamal(AsymmetricCipher):
         self.p = None #primo grande
         self.g = None #gerador / raiz primitiva 
         self.a = None #chave pública calculada
-        self.chave_publica = None
-        self.chave_privada = None
+        self.chave_publica = None #(p, g, a)
+        self.chave_privada = None 
         
     def gerar_chave_privada(self):
         self.chave_privada = random.randint(3, self.p-2)
