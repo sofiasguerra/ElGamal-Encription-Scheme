@@ -1,8 +1,9 @@
+from algoritmos.asymmetric_cipher import AsymmetricCipher
 from utils.math_utils import MathUtils
 from utils.message_utils import MessageUtils
 import random
 
-class RSA():
+class RSA(AsymmetricCipher):
     
     def __init__(self, tamanho_bits):
         self.bits = tamanho_bits 
@@ -64,3 +65,9 @@ class RSA():
         
         mensagem = MessageUtils.blocos_para_mensagem(blocos)
         return mensagem
+
+    def get_chave_publica(self):
+        return self.chave_publica
+
+    def get_chave_privada(self):
+        return self.chave_privada 

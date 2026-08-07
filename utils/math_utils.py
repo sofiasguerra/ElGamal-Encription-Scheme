@@ -2,17 +2,15 @@
 import random
 
 class MathUtils:
-
-    # Implement the Euclidean algorithm to find the greatest common divisor (GCD) of two integers a and b
-    # Implement a simple iterative function that returns the GCD of a and b
+#========================================================================================================================================================#
+        #Operações aritméticas modulares (RSA e ElGamal)
+#========================================================================================================================================================#
     @staticmethod
     def gcd(a: int, b: int) -> int:
         while b != 0:
             a, b = b, a % b
         return abs(a)
 
-    # Implement the Extended Euclidean algorithm to find the GCD of two integers a and b, as well as the coefficients x and y such that ax + by = gcd(a, b)
-    # Implement a recursive function that returns a tuple containing the GCD and the coefficients x and y
     @staticmethod
     def extended_gcd(a: int, b: int) -> tuple[int, int, int]:
         if b == 0:
@@ -23,8 +21,6 @@ class MathUtils:
             y = x1 - (a // b) * y1
             return gcd, x, y
 
-
-    #Implement a function to compute the modular inverse of a number a modulo m using the Extended Euclidean algorithm
     @staticmethod
     def modular_inverse(a: int, m: int) -> int:
         gcd, x, _ = MathUtils.extended_gcd(a, m)
@@ -32,18 +28,9 @@ class MathUtils:
             raise ValueError(f"Modular inverse does not exist for a={a} and m={m}")
         return x % m
 
-    #Implement a function to compute the modular exponentiation of a number base raised to the power of exponent modulo modulus using the method of exponentiation by squaring
-    @staticmethod
-    def mod_pow(base: int, exponent: int, modulus: int) -> int:
-        result = 1
-        base = base % modulus
-        while exponent > 0:
-            if exponent % 2 == 1:
-                result = (result * base) % modulus
-            exponent = exponent // 2
-            base = (base * base) % modulus
-        return result
-    
+#========================================================================================================================================================#
+        # Primalidade e geração de números primos (RSA e ElGamal)   
+#========================================================================================================================================================# 
     @staticmethod
     def eh_primo(n, k=20): #Miller-Rabin
         # k = numero de rodadas teste
@@ -86,6 +73,36 @@ class MathUtils:
             numero = numero | 1 
             if MathUtils.eh_primo(numero):
                 return numero    
+            
+#========================================================================================================================================================#
+        #ElGamal
+#========================================================================================================================================================#
+    @staticmethod
+    def gerar_p_seguro(bits):   
+         while True:
+            candidatoQ = MathUtils.gerar_primo(bits - 1)
+            candidatoP = 2 * candidatoQ + 1
+        
+            if MathUtils.eh_primo(candidatoP):
+                return candidatoP, candidatoQ
+
+    @staticmethod
+    def encontrar_raiz_primitiva(p, q):
+        while True:
+            candidatoG = random.randint(2, p-2)
+            
+            if (pow(candidatoG, 2, p)) != 1 and (pow(candidatoG, q, p)) != 1:
+                return candidatoG
+            
+#========================================================================================================================================================#
+        # Conversão entre grupos de bytes e números inteiros (RSA e ElGamal)
+#========================================================================================================================================================#
+    @staticmethod
+    def calcular_tamanho_bloco(p):
+        k = 1
+        while (256 ** (k + 1)) < p:
+            k += 1
+        return k
     
     @staticmethod
     def grupo_para_256(grupo):
@@ -95,10 +112,11 @@ class MathUtils:
         return numero
     
     @staticmethod
-    def _256_para_grupo(numero):
+    def base256_para_grupo(numero):
         grupo = []
         while numero > 0:
             grupo.append(numero % 256)
             numero //= 256
         grupo.reverse()
         return grupo
+    

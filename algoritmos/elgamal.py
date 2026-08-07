@@ -1,8 +1,9 @@
+from algoritmos.asymmetric_cipher import AsymmetricCipher
 from utils.math_utils import MathUtils
 from utils.message_utils import MessageUtils
 import random
 
-class ElGamal:
+class ElGamal(AsymmetricCipher):
     def __init__(self, tamanho_bits):
         self.bits = tamanho_bits
         self.p = None #primo grande
@@ -11,25 +12,6 @@ class ElGamal:
         self.chave_publica = None
         self.chave_privada = None
         
-    def gerar_p_seguro(self):   
-         while True:
-            candidatoQ = MathUtils.gerar_primo(self.bits - 1)
-            candidatoP = 2 * candidatoQ + 1
-        
-            if MathUtils.eh_primo(candidatoP):
-                self.p = candidatoP
-                self.q = candidatoQ
-                break
-    
-        
-    def encontrar_raiz_primitiva(self):
-        while True:
-            candidatoG = random.randint(2, self.p-2)
-            
-            if (pow(candidatoG, 2, self.p)) != 1 and (pow(candidatoG, self.q, self.p)) != 1:
-                self.g = candidatoG
-                break
-    
     def gerar_chave_privada(self):
         self.chave_privada = random.randint(3, self.p-2)
     
@@ -37,8 +19,8 @@ class ElGamal:
         self.a = pow(self.g, self.chave_privada, self.p) # g^x mod p
     
     def gerar_chaves(self):
-        self.gerar_p_seguro()
-        self.encontrar_raiz_primitiva()
+        self.p, self.q = MathUtils.gerar_p_seguro(self.bits)
+        self.g = MathUtils.encontrar_raiz_primitiva(self.p, self.q)
         self.gerar_chave_privada()
         self.calcular_a()
         self.chave_publica = (self.p, self.g, self.a)
@@ -76,4 +58,10 @@ class ElGamal:
         
         mensagem = MessageUtils.blocos_para_mensagem(blocos)
         return mensagem
+
+    def get_chave_publica(self):
+        return self.chave_publica
+
+    def get_chave_privada(self):
+        return self.chave_privada
     

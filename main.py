@@ -1,29 +1,208 @@
 from algoritmos.elgamal import ElGamal
 from algoritmos.rsa import RSA
+from benchmark.benchmark import Benchmark
+from benchmark.comparison import Comparison
+import time
+
+def escolha_de_mensagem():
+    print("Escolha uma opção para a mensagem:")
+    print("[1] Digitar uma mensagem")
+    print("[2] Mensagem aleatória da bibliteca")
+    print("[0] Voltar ao menu principal")
+    opcao = input(">")
+    if opcao == "1":
+        mensagem = input("Digite a mensagem: ")
+        return mensagem
+    elif opcao == "2":
+        return getMensagemAleatoria()
+    elif opcao == "0":
+        return
+    else:
+        print("Opção inválida! Tente novamente.")
+        time.sleep(2)
+        return escolha_de_mensagem()
 
 
-#menu 
-#exibição do terminal
-#chamadas das funções
+def menu_configuracao():
+    print("Escolha uma opção de exibição:")
+    print("[1] Detalhada")
+    print("[2] Simples")
+    opcao = input(">")
 
-msg = "lôobo🐺ソフィア"
+    if opcao == "1":
+        return "detalhada"
+    elif opcao == "2":
+        return "simples"
+    else:
+        print("Opção inválida! Tente novamente.")
+        time.sleep(2)
+        return menu_configuracao()
 
-print("Mensagem Original: ", msg)
 
-print("---------------------------------------------------")
-print("Criptografia RSA")
-rsaTest = RSA(tamanho_bits=128)
-rsaTest.gerar_chaves()  
-msg_cripto_rsa = rsaTest.criptografar_mensagem(msg)
-print(msg_cripto_rsa)
-msg_original_rsa = rsaTest.descriptografar_mensagem(msg_cripto_rsa)
-print(msg_original_rsa)
+def menu_rsa(configuracao):
+    mensagem = escolha_de_mensagem()
+    if mensagem is None:
+        return
 
-print("---------------------------------------------------")
-print("Criptografia ElGamal")
-elTest2 = ElGamal(tamanho_bits=128)
-elTest2.gerar_chaves()
-msg_cripto = elTest2.criptografar_mensagem(msg)
-print(msg_cripto)
-msg_original = elTest2.descriptografar_mensagem(msg_cripto)    
-print(msg_original)
+    rsa = RSA(256)
+
+    if configuracao == "detalhada":
+        benchmark_rsa = Benchmark(rsa)
+
+        tempo, memoria, _ = benchmark_rsa.benchmark_geracao_chaves()
+        print(f"Tempo de geração de chaves: {tempo:.6f}s")
+        print(f"Memória utilizada na geração de chaves: {memoria / 1024:.2f} KB")
+        
+
+        tempo, memoria, msg_criptografada = benchmark_rsa.benchmark_criptografia(mensagem)
+        print(f"Tempo de criptografia: {tempo:.6f}s")
+        print(f"Memória utilizada na criptografia: {memoria / 1024:.2f} KB")
+        print(f" Mensagem criptografada: {msg_criptografada}")
+        
+
+        tempo, memoria, msg_descriptografada = benchmark_rsa.benchmark_descriptografia(msg_criptografada)
+        print(f"Tempo de descriptografia: {tempo:.6f}s")
+        print(f"Memória utilizada na descriptografia: {memoria / 1024:.2f} KB")
+        print(f"Mensagem descriptografada: {msg_descriptografada}")
+        
+
+        if(mensagem == msg_descriptografada):
+            print("A mensagem descriptografada é igual à mensagem original.")
+        time.sleep(2)
+        
+
+    else:
+        rsa.gerar_chaves()
+        msg_criptografada = rsa.criptografar_mensagem(mensagem)
+        msg_descriptografada = rsa.descriptografar_mensagem(msg_criptografada)
+
+        print(f"Mensagem criptografada: {msg_criptografada}")
+        print(f"Mensagem descriptografada: {msg_descriptografada}")
+        
+
+        if(mensagem == msg_descriptografada):
+            print("A mensagem descriptografada é igual à mensagem original.")
+        time.sleep(2)
+
+    
+
+def menu_elgamal(configuracao):
+    mensagem = escolha_de_mensagem()
+    if mensagem is None:
+        return
+
+    elgamal = ElGamal(256)
+
+    if configuracao == "detalhada":
+        benchmark_elgamal = Benchmark(elgamal)
+
+        tempo, memoria, _ = benchmark_elgamal.benchmark_geracao_chaves()
+        print(f"Tempo de geração de chaves: {tempo:.6f}s")
+        print(f"Memória utilizada na geração de chaves: {memoria / 1024:.2f} KB")
+        
+
+        tempo, memoria, msg_criptografada = benchmark_elgamal.benchmark_criptografia(mensagem)
+        print(f"Tempo de criptografia: {tempo:.6f}s")
+        print(f"Memória utilizada na criptografia: {memoria / 1024:.2f} KB")
+        print(f" Mensagem criptografada: {msg_criptografada}")
+        
+
+        tempo, memoria, msg_descriptografada = benchmark_elgamal.benchmark_descriptografia(msg_criptografada)
+        print(f"Tempo de descriptografia: {tempo:.6f}s")
+        print(f"Memória utilizada na descriptografia: {memoria / 1024:.2f} KB")
+        print(f"Mensagem descriptografada: {msg_descriptografada}")
+        time.sleep(2)
+
+    else:
+        elgamal.gerar_chaves()
+        msg_criptografada = elgamal.criptografar_mensagem(mensagem)
+        msg_descriptografada = elgamal.descriptografar_mensagem(msg_criptografada)
+
+        print(f"Mensagem criptografada: {msg_criptografada}")
+        print(f"Mensagem descriptografada: {msg_descriptografada}")
+        
+
+        if(mensagem == msg_descriptografada):
+            print("A mensagem descriptografada é igual à mensagem original.")
+        time.sleep(2)
+
+        
+
+def comparar_algoritmos():
+    mensagem = escolha_de_mensagem()
+    if mensagem is None:
+        return
+
+    rsa = RSA(256)
+    elgamal = ElGamal(256)
+
+    comparacao = Comparison(rsa, elgamal)
+    print(comparacao.comparar_geracao_chaves())
+    time.sleep(3)
+    print(comparacao.comparar_criptografia(mensagem))
+    time.sleep(3)
+
+    resposta, igual = comparacao.comparar_descriptografia()
+    print(resposta)
+
+    if(igual):
+        print("As mensagens descriptogradas são iguais")
+    
+    time.sleep(3)
+
+
+def main():
+    configuracao = "detalhada"
+    print(
+    "\n"
+    "███████╗██╗      ██████╗  █████╗ ███╗   ███╗ █████╗ ██╗\n"
+    "██╔════╝██║     ██╔════╝ ██╔══██╗████╗ ████║██╔══██╗██║\n"
+    "█████╗  ██║     ██║  ███╗███████║██╔████╔██║███████║██║\n"
+    "██╔══╝  ██║     ██║   ██║██╔══██║██║╚██╔╝██║██╔══██║██║\n"
+    "███████╗███████╗╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗\n"
+    "╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝\n"
+    "\n"
+    "███████╗███╗   ██╗ ██████╗██████╗ ██╗   ██╗██████╗ ████████╗██╗ ██████╗ ███╗   ██╗\n"
+    "██╔════╝████╗  ██║██╔════╝██╔══██╗╚██╗ ██╔╝██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║\n"
+    "█████╗  ██╔██╗ ██║██║     ██████╔╝ ╚████╔╝ ██████╔╝   ██║   ██║██║   ██║██╔██╗ ██║\n"
+    "██╔══╝  ██║╚██╗██║██║     ██╔══██╗  ╚██╔╝  ██╔═══╝    ██║   ██║██║   ██║██║╚██╗██║\n"
+    "███████╗██║ ╚████║╚██████╗██║  ██║   ██║   ██║        ██║   ██║╚██████╔╝██║ ╚████║\n"
+    "╚══════╝╚═╝  ╚═══╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝\n"
+    "\n"
+    "======================================================================================\n"
+    "                    ElGamal Encryption Scheme & RSA Cryptosystem\n"
+    "======================================================================================\n"
+    )
+    while True:
+
+        print(
+        "\n"
+        "╔══════════════════════════════════════╗\n"
+        "║              MENU                    ║\n"
+        "╠══════════════════════════════════════╣\n"
+        "║  Escolha uma opção:                  ║\n"
+        "║  [1] RSA                             ║\n"
+        "║  [2] ElGamal                         ║\n"
+        "║  [3] Comparar RSA x ElGamal          ║\n"
+        "║  [4] Configuração de Detalhes        ║\n"
+        "║                                      ║\n"
+        "║  [0] Sair                            ║\n"
+        "╚══════════════════════════════════════╝\n"
+        )
+        opcao = input(">")
+        if opcao == "1":
+            menu_rsa(configuracao)
+        elif opcao == "2":
+            menu_elgamal(configuracao)
+        elif opcao == "3":
+            comparar_algoritmos()
+        elif opcao == "4":
+            configuracao = menu_configuracao()
+        elif opcao == "0":
+            print("Saindo! Até logo!")
+            exit()
+        else:
+            print("Opção inválida! Tente novamente.")
+            time.sleep(2)
+    
+main()
