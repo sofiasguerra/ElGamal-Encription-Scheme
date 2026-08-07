@@ -4,6 +4,22 @@ from benchmark.benchmark import Benchmark
 Módulo que executa os mesmos testes (geração de chaves, criptografia e
 descriptografia) para RSA e ElGamal via Benchmark, e monta comparações
 textuais de tempo e memória entre os dois algoritmos.
+
+OBS: os tempos de geração de chaves (principalmente do ElGamal) podem variar bastante
+entre uma execução e outra, mesmo rodando o mesmo bits. Isso acontece porque gerar_primo
+e gerar_p_seguro ficam sorteando candidatos aleatórios até acharem um primo (ou um par
+p=2q+1 com os dois primos) - às vezes acerta rápido, às vezes precisa testar bem mais
+candidatos até sair um primo, é sorte do sorteio mesmo. O ElGamal costuma variar mais
+que o RSA porque, além de precisar achar um q primo, ainda precisa que 2q+1 TAMBÉM seja
+primo - então às vezes descarta vários q's até um par funcionar. 
+O tempo/memória de criptografia e descriptografia varia menos que o de geração de chaves,
+mas também não é fixo - não é raro o ElGamal ganhar do RSA numa rodada e perder na
+próxima (e vice-versa), mesmo cifrando a mesma mensagem. Isso rola porque o ElGamal usa
+um k aleatório novo a cada cifragem, então o valor de k sorteado (maior ou menor) influencia
+um pouco o tempo de cada pow() - fora variação normal de máquina (outros processos rodando,
+etc). Por isso, rodar só uma vez e comparar pode dar uma falsa impressão de "algoritmo X é
+sempre mais rápido" - o Benchmark já tira média de 5 execuções pra suavizar isso um pouco,
+mas mesmo assim dá pra ver diferença de rodada pra rodada.
 """
 class Comparison():
     def __init__(self, rsa, elgamal):
