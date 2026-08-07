@@ -4,6 +4,17 @@ from benchmark.benchmark import Benchmark
 from benchmark.comparison import Comparison
 import time
 
+def getMensagemAleatoria():
+
+    frases = ["a Matemática é linda!!😻", "quero uma pizza com Coentro 🌿, por favor!", "FMCC2 é a melhor cadeira do P2!", "queremosFérias", "@tiagoMassoni", "FMCC2 é muito legal!! 🥳","👍🤙🙏👏", "eu amo o curso de Ciências da Computação na UFCG","Quando tudo isso acabar, eu vou precisar de TERAPIA!!!"]
+
+    import random
+    r = random.randint(0, len(frases) - 1)
+    frase = frases[r]
+    print(f"Frase aleatória: {frase}")
+    time.sleep(1)
+    return frase
+
 def escolha_de_mensagem():
     print("Escolha uma opção para a mensagem:")
     print("[1] Digitar uma mensagem")
