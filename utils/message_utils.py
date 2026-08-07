@@ -1,6 +1,5 @@
 from utils.math_utils import MathUtils
 
-
 class MessageUtils:
     @staticmethod
     def texto_para_bytes(texto):
@@ -36,7 +35,9 @@ class MessageUtils:
         lista = MessageUtils.texto_para_bytes(mensagem)
         numero = "".join(map(str, lista))
         blocos = MessageUtils.criar_blocos(numero, p)
-        return blocos
+        
+        
+        return MessageUtils.texto_para_blocos_256(mensagem, p)
 
     @staticmethod
     def blocos_para_numero(blocos):
@@ -61,16 +62,18 @@ class MessageUtils:
     def bytes_para_texto(bytes):
         texto = "".join(chr(byte) for byte in bytes)
         return texto
-    
+    ''
     @staticmethod
     def blocos_para_mensagem(blocos):
         numero = MessageUtils.blocos_para_numero(blocos)
         bytes = MessageUtils.numero_para_bytes(numero)
         mensagem = MessageUtils.bytes_para_texto(bytes)
-        return mensagem
-
+        
+        
+        return MessageUtils.base256_para_texto(blocos) 
+    
     @staticmethod
-    def texto_para_blocos(mensagem, p):
+    def texto_para_blocos_256(mensagem, p):
         letras = list(mensagem.encode("utf-8"))
         blocos = []
 

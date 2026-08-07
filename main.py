@@ -6,13 +6,13 @@ from algoritmos.rsa import RSA
 #exibição do terminal
 #chamadas das funções
 
-msg = "TerMInei ess4 b0mbbb4, e s4mu3l aind4 quuuerr complicar XD!"
+msg = "lôobo🐺ソフィア"
 
 print("Mensagem Original: ", msg)
 
 print("---------------------------------------------------")
 print("Criptografia RSA")
-rsaTest = RSA(tamanho_bits=8)
+rsaTest = RSA(tamanho_bits=128)
 rsaTest.gerar_chaves()  
 msg_cripto_rsa = rsaTest.criptografar_mensagem(msg)
 print(msg_cripto_rsa)
@@ -21,7 +21,7 @@ print(msg_original_rsa)
 
 print("---------------------------------------------------")
 print("Criptografia ElGamal")
-elTest2 = ElGamal(tamanho_bits=8)
+elTest2 = ElGamal(tamanho_bits=128)
 elTest2.gerar_chaves()
 msg_cripto = elTest2.criptografar_mensagem(msg)
 print(msg_cripto)
